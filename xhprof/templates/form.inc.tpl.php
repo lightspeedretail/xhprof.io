@@ -27,12 +27,16 @@ namespace ay\xhprof;
 			<div class="column">
 				<?=\ay\input('query[dataset_size]', 'Dataset Size', NULL, array('comment' => 'Integer number that defines the maximum number of the most recent requests to aggregate that match the query. Defaults to <mark>1,000</mark>.'))?>
 			</div>
+
 		<?php endif;?>
 		<div class="column">
 			<?=\ay\input('query[request_ids]', 'Request IDs', NULL, array('comment' => 'Request ID or a comma-separated list of request IDs to analyse. Entering two IDs will compare the requests.' /* Three or more will list them.*/))?>
 		</div>
+		<div class="column">
+			<?=\ay\input('query[method_callee_id]', 'Callee ID (function)', NULL, array('comment' => 'Callee ID to analyse. By entering an ID, it will count the number of method calls instead of request'))?>
+		</div>
 	</div>
-	
+
 	<div class="buttons">
 		<input type="submit" value="Filter Data" />
 		<?php if(!empty($_GET['xhprof']['query'])):?>
