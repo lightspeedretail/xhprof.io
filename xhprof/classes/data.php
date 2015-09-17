@@ -539,6 +539,79 @@ class Data
 
 		$sth->execute($query);
 	}
+
+	public function getSavedFilters()
+	{
+		$result	= $this->db->query("
+			SELECT
+				`id`,
+				`name`,
+				`filter`
+			FROM
+				`filters`;
+		")->fetchAll(PDO::FETCH_ASSOC);
+
+		$filters = array();
+		foreach ($result as $filter)
+		{
+			$filter['filter'] = json_decode($filter['filter'], true);
+			$filters[] = $filter;
+		}
+
+		return $filters;
+	}
+
+	public function getSavedFilterById($id)
+	{
+		$stmt	= $this->db->prepare("
+			SELECT
+				`id`,
+				`name`,
+				`filter`
+			FROM
+				`filters`
+			WHERE id = :filter_id;
+		");
+
+		$stmt->bindValue(':filter_id', $id, PDO::PARAM_INT);
+		$stmt->execute();
+		$filter = $stmt->fetch(PDO::FETCH_ASSOC);
+
+		$filter['filter'] = json_decode($filter['filter'], true);
+		return $filter;
+	}
+
+	public function saveFilter($template, $name, array $filter, $id)
+	{
+		if (empty($id))
+		{
+			$query = "INSERT INTO `filters` SET `name` = :name, `filter` = :filter;";
+			$sth = $this->db->prepare($query);
+		}
+		else
+		{
+			$query = "UPDATE `filters` SET `name` = :name, `filter` = :filter WHERE `id` = :id";
+			$sth = $this->db->prepare($query);
+			$sth->bindValue(':id', $id, PDO::PARAM_INT);
+		}
+
+		$format_name = str_replace("[$template] ", "", $name);
+		$format_name = "[$template] $format_name";
+		$sth->bindValue(':name', $format_name, PDO::PARAM_STR);
+		$sth->bindValue(':filter', json_encode($filter), PDO::PARAM_STR);
+		$sth->execute();
+	}
+
+	public function deleteFilter($id)
+	{
+		if (!empty($id))
+		{
+			$query = "DELETE FROM `filters` WHERE `id` = :id";
+			$sth = $this->db->prepare($query);
+			$sth->bindValue(':id', $id, PDO::PARAM_INT);
+			$sth->execute();
+		}
+	}
 }
 
 class DataException extends \Exception {}

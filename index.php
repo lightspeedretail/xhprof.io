@@ -32,38 +32,38 @@ $template['file']	= $_GET['xhprof']['template'];
 if(!empty($_POST['ay']['query']))
 {
 	$template	= $template['file'];
-	
+
 	$query		= array_filter($_POST['ay']['query']);
-	
+
 	if(isset($query['request_ids']))
 	{
 		$template		= 'request';
 		$ids			= explode(',', $query['request_ids']);
-		
-		
+
+
 		if(count($ids) == 1)
 		{
 			$query['request_id']		= $ids[0];
-			
+
 			unset($query['request_ids']);
 		}
 		else if(count($ids) == 2)
 		{
 			$query['request_id']		= $ids[0];
 			$query['second_request_id']	= $ids[1];
-			
+
 			unset($query['request_ids']);
 		}
 		else
 		{
 			ay_redirect(\AY\REDIRECT_REFERRER, 'Sorry, this feature is currently not implemented.');
-		
+
 			$template	= 'requests';
 		}
-		
+
 		unset($ids);
 	}
-	
+
 	\ay\redirect(url($template, $query));
 }
 
@@ -82,7 +82,7 @@ else
 			throw new \Exception('Defining a filter with a multidimensional array is not supported.');
 		}
 	}
-	
+
 	// ay_input() will look for the default input value in this globally accessible variable.
 	$input	= array('query' => $_GET['xhprof']['query']);
 
@@ -90,17 +90,17 @@ else
 	{
 		\ay\message('Invalid <mark>from</mark> date-time format.');
 	}
-	
+
 	if(!empty($_GET['xhprof']['query']['datetime_to']) && !validate_datetime($_GET['xhprof']['query']['datetime_to']))
 	{
 		\ay\message('Invalid <mark>to</mark> date-time format.');
 	}
-	
+
 	if(isset($_GET['xhprof']['query']['host'], $_GET['xhprof']['query']['host_id']))
 	{
 		\ay\message('<mark>host_id</mark> will overwrite <mark>host</mark>. Unset either to prevent unexpected results.');
 	}
-	
+
 	if(isset($_GET['xhprof']['query']['uri'], $_GET['xhprof']['query']['uri_id']))
 	{
 		\ay\message('<mark>uri_id</mark> will overwrite <mark>uri</mark>. Unset either to prevent unexpected results.');
@@ -108,6 +108,15 @@ else
 }
 
 $xhprof_data_obj	= new Data($config['pdo']);
+
+if(!empty($_POST['ay']['filter']))
+{
+	$xhprof_data_obj->saveFilter($_GET['xhprof']['template'], $_POST['ay']['filter']['name'], $_GET['xhprof'], $_POST['ay']['filter']['id']);
+}
+if(!empty($_GET['xhprof']['filter']['delete']))
+{
+	$xhprof_data_obj->deleteFilter($_GET['xhprof']['filter']['delete']);
+}
 
 ob_start();
 require BASE_PATH . '/templates/' . $template['file'] . '.tpl.php';

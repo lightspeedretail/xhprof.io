@@ -23,6 +23,8 @@ $navigation	= array
 <?php
 unset($navigation);
 
+require __DIR__ . '/savedfilters.inc.tpl.php';
+
 if(!\ay\error_present() && !empty($_GET['xhprof']['query'])):
 
 $labels	= array
