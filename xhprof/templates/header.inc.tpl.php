@@ -23,8 +23,10 @@ $navigation	= array
 <?php
 unset($navigation);
 
+require __DIR__ . '/savedfilters.inc.tpl.php';
+
 if(!\ay\error_present() && !empty($_GET['xhprof']['query'])):
-	
+
 $labels	= array
 (
 	'host_id'			=> 'Host #',
@@ -34,6 +36,7 @@ $labels	= array
 	'request_id'		=> 'Request #',
 	'second_request_id'	=> 'Second Request #',
 	'callee_id'			=> 'Function #',
+	'method_callee_id'	=> 'Function #',
 	'datetime_from'		=> 'Date-time from',
 	'datetime_to'		=> 'Date-time to',
 	'dataset_size'		=> 'Dataset Size'
@@ -44,12 +47,12 @@ $labels	= array
 	<p>The following filters affect the displayed data:</p>
 	<dl>
 	<?php foreach($_GET['xhprof']['query'] as $k => $v):
-		
+
 		if(!isset($labels[$k]))
 		{
 			throw new \Exception('Filter label is not defined.');
 		}
-		
+
 		if($k == 'request_id'):
 	?>
 		<dt><?=$labels[$k]?></dt>

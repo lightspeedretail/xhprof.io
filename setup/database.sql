@@ -138,6 +138,15 @@ CREATE TABLE `requests` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `filters`;
+
+CREATE TABLE `filters` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `filter` TEXT NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
