@@ -10,17 +10,22 @@ register_shutdown_function(function(){
 	// I make sure that all execution data, including that of the earlier
 	// registered register_shutdown_function, is collected.
 
-	$xhprof_data	= xhprof_disable();
-
-	if(function_exists('fastcgi_finish_request'))
+	if (strpos($_SERVER['REQUEST_URI'], 'xhprof') === false)
 	{
-		fastcgi_finish_request();
+		$xhprof_data	= xhprof_disable();
+
+		if(function_exists('fastcgi_finish_request'))
+		{
+			fastcgi_finish_request();
+		}
+
+		$config			= require __DIR__ . '/../xhprof/includes/config.inc.php';
+
+		require_once __DIR__ . '/../xhprof/classes/data.php';
+
+		$xhprof_data_obj	= new \ay\xhprof\Data($config['pdo']);
+		$xhprof_data_obj->save($xhprof_data);
 	}
-	
-	$config			= require __DIR__ . '/../xhprof/includes/config.inc.php';
-	
-	require_once __DIR__ . '/../xhprof/classes/data.php';
-	
-	$xhprof_data_obj	= new \ay\xhprof\Data($config['pdo']);
-	$xhprof_data_obj->save($xhprof_data);
+
+
 });
